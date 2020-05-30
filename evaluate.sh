@@ -1,6 +1,5 @@
-lstmeval --model data/model/eng.lstm \
-  --traineddata data/tess_data/eng.traineddata \
-  --eval_listfile data/output/eng.training_files.txt
+lstmeval --model data/model/tam.lstm \
+  --traineddata data/tess_data/tam.traineddata \   --eval_listfile data/output/tam.training_files.txt
 
 
 #--model_dat takes the extracted model as input
