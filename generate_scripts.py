@@ -2,12 +2,13 @@ import yaml
 
 lang_info = yaml.load(open('config.yaml'),Loader=yaml.FullLoader)
 
+tesseract_path = lang_info["tesseract_path"]
 language = lang_info['language']
 fontlist = lang_info['fontlist']
 maxpages = lang_info['maxpages']
 
 
-evaluate_sh_content = '''lstmeval --model data/model/'''+ language + '''.lstm \\
+evaluate_sh_content = tesseract_path + '''/lstmeval --model data/model/'''+ language + '''.lstm \\
   --traineddata data/tess_data/''' + language + '''.traineddata \ \
   --eval_listfile data/output/''' + language + '''.training_files.txt
 
@@ -22,7 +23,7 @@ evaluate_file.write(evaluate_sh_content)
 evaluate_file.close()
 
 
-extract_model_content = """combine_tessdata -e data/tess_data/"""  + language + """.traineddata data/model/""" + language + """.lstm
+extract_model_content = tesseract_path +"""/combine_tessdata -e data/tess_data/"""  + language + """.traineddata data/model/""" + language + """.lstm
 
 #after flag -e the first path takes the pre-existing data it was trained on
 #the second path specified the output path for the model
@@ -33,8 +34,8 @@ extract_model_file.write(extract_model_content)
 extract_model_file.close()
 
 
-generate_training_data_content = """rm -rf data/output/*
-tesstrain.sh --fonts_dir data/fonts \\
+generate_training_data_content = """rm -rf data/output/* 
+""" + tesseract_path + """/tesstrain.sh --fonts_dir data/fonts \\
 	     --fontlist '""" + fontlist + """' \\
 	     --lang """ + language + """ \\
 	     --linedata_only \\
@@ -55,7 +56,7 @@ generate_training_data_file.close()
 
 
 train_content = """rm -rf data/finetuned_model/*
-OMP_THREAD_LIMIT=8 lstmtraining \\
+OMP_THREAD_LIMIT=8 """ + tesseract_path + """/lstmtraining \\
 	--continue_from data/model/""" + language + """.lstm \\
 	--model_output data/finetuned_model/ \\
 	--traineddata data/tess_data/""" + language + """.traineddata \\
